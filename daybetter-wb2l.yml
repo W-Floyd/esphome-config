@@ -1,0 +1,99 @@
+# These substitutions allow the end user to override certain values
+substitutions:
+  name: "daybetter-wb2l-"
+  friendly_name: "Daybetter WB2L"
+  board: "wb2l"
+  default_temperature: "2700K"
+
+esphome:
+  name: "${name}"
+  comment: "${friendly_name}"
+  project:
+    name: "wfloyd.daybetter-wb2l"
+    version: "1.0.0"
+  name_add_mac_suffix: true
+  on_boot:
+    then:
+      - light.turn_on:
+          id: tuya_globe
+          brightness: 100%
+          color_brightness: 0%
+          color_temperature: "${default_temperature}"
+
+bk72xx:
+  board: "${board}"
+  framework:
+    version: dev
+
+web_server:
+captive_portal:
+logger:
+api:
+ota:
+  platform: esphome
+
+wifi:
+  ap:
+    password: "12345678"
+
+# This should point to the public location of this yaml file.
+dashboard_import:
+  package_import_url: github://W-Floyd/esphome-configs/daybetter-${board}.yaml@main
+  import_full_config: false # or true
+
+debug:
+  update_interval: 5s
+
+text_sensor:
+  - platform: debug
+    reset_reason:
+      name: "${friendly_name} Reset Reason"
+
+sensor:
+  - platform: uptime
+    name: "${friendly_name} Uptime Sensor"
+
+# Logger must be at least debug (default)
+logger:
+  level: debug
+
+bp5758d:
+  data_pin: P8
+  clock_pin: P7
+
+# Individual outputs
+output:
+  - platform: bp5758d
+    id: output_red
+    channel: 3 # Valid channels are 1-5
+    current: 28 # In mA, valid values are 0-90, default is 10.
+  - platform: bp5758d
+    id: output_green
+    channel: 2 # Valid channels are 1-5
+    current: 28 # In mA, valid values are 0-90, default is 10.
+  - platform: bp5758d
+    id: output_blue
+    channel: 1 # Valid channels are 1-5
+    current: 28 # In mA, valid values are 0-90, default is 10.
+  - platform: bp5758d
+    id: output_coldwhite
+    channel: 5 # Valid channels are 1-5
+    current: 30 # In mA, valid values are 0-90, default is 10.
+  - platform: bp5758d
+    id: output_warmwhite
+    channel: 4 # Valid channels are 1-5
+    current: 30 # In mA, valid values are 0-90, default is 10.
+
+light:
+  - platform: rgbww
+    id: tuya_globe
+    name: "${friendly_name}"
+    red: output_red
+    green: output_green
+    blue: output_blue
+    cold_white: output_coldwhite 
+    warm_white: output_warmwhite 
+    cold_white_color_temperature: 6500 K
+    warm_white_color_temperature: 2700 K
+    color_interlock: true
+    restore_mode: "ALWAYS_ON"
