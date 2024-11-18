@@ -9,7 +9,7 @@ esphome:
   name: "${name}"
   comment: "${friendly_name}"
   project:
-    name: "wfloyd.daybetter-wb2l"
+    name: "wfloyd.daybetterwb2l"
     version: "1.0.0"
   name_add_mac_suffix: true
   on_boot:
